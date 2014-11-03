@@ -1,12 +1,44 @@
-with open('sample.c') as f:
-   data = f.read()
+def readProgram(filename):
+    prog = []
+    with open(filename) as f:
+        data = f.read()
+    
+    i = 0
+    temp = []
+    while(i<len(data)):
+        if(data[i]=='/' and data[i+1]=='/'):
+            while(data[i]!='\n'):
+                i += 1
+   
+        
+        if(data[i]=='/' and data[i+1]=='*'):
+            while(True):
+                if(data[i]=='*' and data[i+1]=='/'):
+                    i += 2
+                    break
 
-data = data.split('\n')
+                i += 1    
 
-for i in range(len(data)):
-   data[i] = data[i].strip()
+        
+        temp.append(data[i])
+        if(data[i]=='\n'):
+            prog.append("".join(temp))
+            temp = []
 
-while '' in data:
-   data.remove('')
+        i += 1
 
-print(data)   
+    return prog
+
+
+filename = input("Enter filename: ")
+prog = readProgram(filename) #remove comments from the program
+prog = "".join(prog).split('\n')
+
+
+for i in range(len(prog)):
+   prog[i] = prog[i].strip()
+
+while '' in prog:
+   prog.remove('')
+
+print(prog)  
