@@ -14,15 +14,17 @@ def operator(string):
         tokens.append(tup)
 
 def identifiers(string):
-    r = re.finditer(r"\w+",string)
-    for i in r:
-        if(i.group() in keywords):
-            tup = (i.group(),'KEYWORD')
-            tokens.append(tup)
-        
-        else:
-            tup = (i.group(),'ID')
-            tokens.append(tup)
+    strings = string.split(" ")
+    for string in strings:
+        i = re.search(r"^[_a-zA-Z]\w*",string)
+        if i:
+            if(i.group() in keywords):
+                tup = (i.group(),'KEYWORD')
+                tokens.append(tup)
+            
+            else:
+                tup = (i.group(),'ID')
+                tokens.append(tup)        
 
 def spSymbols(string):
     r = re.finditer(r"[\(\)\{\};,]",string)
@@ -37,7 +39,7 @@ def strings(string):
         tokens.append(tup)
 
 def constants(string):
-    r = re.finditer(r"=\s+(.*);",string)
+    r = re.finditer(r"=\s*(.*);",string)
     for i in r:
         tup = (i.group(1),"CONST")
         tokens.append(tup)

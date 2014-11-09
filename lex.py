@@ -47,12 +47,13 @@ while '' in prog:
 prog = removePPD(prog)
 
 for line in prog:
-    operator(line)
     identifiers(line)
+    operator(line)
     spSymbols(line)
     strings(line)
     constants(line)
 
 for i in tokens:
     print(i)
+
 
