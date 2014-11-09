@@ -1,12 +1,15 @@
-#include<stdio.h>
+#include<stdio.h>    
 
 /*
 
-    Multi line comment
-    
-*/    
+Multi line comment
+
+*/
+
 
 int main()
 {
-   printf("Hello World!\n"); //prints hello world
+   int a = 10; 
+   printf("Hello World!\n");  //single line comment
+   return 0;
    }

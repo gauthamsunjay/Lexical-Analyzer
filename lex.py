@@ -1,3 +1,5 @@
+from lexer import *
+
 def readProgram(filename):
     prog = []
     with open(filename) as f:
@@ -41,4 +43,16 @@ for i in range(len(prog)):
 while '' in prog:
    prog.remove('')
 
-print(prog)  
+
+prog = removePPD(prog)
+
+for line in prog:
+    operator(line)
+    identifiers(line)
+    spSymbols(line)
+    strings(line)
+    constants(line)
+
+for i in tokens:
+    print(i)
+
