@@ -8,41 +8,94 @@ keywords = ['auto','break','case','char','double','else','enum','extern','int','
 tokens = []
 
 def operator(string):
-    r = re.finditer(r"[\+\*=/\-%]",string)
+    r = re.finditer(r"\+\+|\-\-|<=|>=|[\+\*=/\-%&><]",string)
+    m = re.findall(r"\".*\"",string)
     for i in r:
-        tup = (i.group(),'OP')
-        tokens.append(tup)
+        if m:
+            flag = 0
+            for j in m:
+                if i.group() in j:
+                    flag = 1
+            
+            if flag==0:
+                tup = (i.group(),'OP')
+                tokens.append(tup)
+
+        else:
+            tup = (i.group(),'OP')
+            tokens.append(tup)
 
 def identifiers(string):
-    strings = string.split(" ")
-    for string in strings:
-        i = re.search(r"^[_a-zA-Z]\w*",string)
-        if i:
-            if(i.group() in keywords):
+    l = re.finditer(r"[_a-zA-Z]\w*",string)
+    m = re.findall(r"\".*\"",string,re.DOTALL)
+    for i in l:
+        if m:
+            flag = 0
+            for j in m:
+                if i.group() in j:
+                    flag = 1
+                    
+            if flag==0:
+                if i.group() in keywords:
+                    tup = (i.group(),'KEYWORD')
+                    tokens.append(tup)
+
+                else:
+                    tup = (i.group(),'ID')
+                    tokens.append(tup)
+        
+        else:
+            if i.group() in keywords:
                 tup = (i.group(),'KEYWORD')
                 tokens.append(tup)
-            
+
             else:
                 tup = (i.group(),'ID')
-                tokens.append(tup)        
-
+                tokens.append(tup)
+    
 def spSymbols(string):
-    r = re.finditer(r"[\(\)\{\};,]",string)
+    r = re.finditer(r"[\[\]\(\)\{\};,]",string)
+    m = re.findall(r"\".*\"",string)
     for i in r:
-        tup = (i.group(),'SPLSYM')
-        tokens.append(tup)
+        if m:
+            flag = 0
+            for j in m:
+                if i.group() in j:
+                    flag = 1
+            
+            if flag==0:
+                tup = (i.group(),'SPLSYM')
+                tokens.append(tup)
+         
+        else:
+            tup = (i.group(),'SPLSYM')
+            tokens.append(tup)
+
 
 def strings(string):
-    r = re.finditer(r"\".*\"",string)
+    r = re.finditer(r"\".*\"|\'.*\'",string)
     for i in r:
         tup = (i.group(),"STRING")
         tokens.append(tup)
 
+
 def constants(string):
-    r = re.finditer(r"=\s*(.*);",string)
+    r = re.finditer(r"\s*(\d+|\d*\.\d+)[,;\b]?",string)
+    m = re.findall(r"\".*\"",string)
     for i in r:
-        tup = (i.group(1),"CONST")
-        tokens.append(tup)
+        if m:
+            flag = 0
+            for j in m:
+                if i.group(1) in j:
+                    flag = 1
+            
+            if flag==0:
+                tup = (i.group(1),"CONST")
+                tokens.append(tup)
+
+        else:
+            tup = (i.group(1),"CONST")
+            tokens.append(tup)
 
     
 def removePPD(prog):
