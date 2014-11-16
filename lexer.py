@@ -7,7 +7,8 @@ keywords = ['auto','break','case','char','double','else','enum','extern','int','
 
 tokens = []
 
-def operator(string):
+def operator(line):
+    string,lineNum = line
     r = re.finditer(r"\+\+|\-\-|<=|>=|[\+\*=/\-%&><]",string)
     m = re.findall(r"\".*\"",string)
     for i in r:
@@ -18,14 +19,15 @@ def operator(string):
                     flag = 1
             
             if flag==0:
-                tup = (i.group(),'OP')
+                tup = (lineNum,i.group(),'OP',i.span())
                 tokens.append(tup)
 
         else:
-            tup = (i.group(),'OP')
+            tup = (lineNum,i.group(),'OP',i.span())
             tokens.append(tup)
 
-def identifiers(string):
+def identifiers(line):
+    string,lineNum = line
     l = re.finditer(r"[_a-zA-Z]\w*",string)
     m = re.findall(r"\".*\"",string,re.DOTALL)
     for i in l:
@@ -37,23 +39,24 @@ def identifiers(string):
                     
             if flag==0:
                 if i.group() in keywords:
-                    tup = (i.group(),'KEYWORD')
+                    tup = (lineNum,i.group(),'KEYWORD',i.span())
                     tokens.append(tup)
 
                 else:
-                    tup = (i.group(),'ID')
+                    tup = (lineNum,i.group(),'ID',i.span())
                     tokens.append(tup)
         
         else:
             if i.group() in keywords:
-                tup = (i.group(),'KEYWORD')
+                tup = (lineNum,i.group(),'KEYWORD',i.span())
                 tokens.append(tup)
 
             else:
-                tup = (i.group(),'ID')
+                tup = (lineNum,i.group(),'ID',i.span())
                 tokens.append(tup)
     
-def spSymbols(string):
+def spSymbols(line):
+    string,lineNum = line
     r = re.finditer(r"[\[\]\(\)\{\};,]",string)
     m = re.findall(r"\".*\"",string)
     for i in r:
@@ -64,22 +67,24 @@ def spSymbols(string):
                     flag = 1
             
             if flag==0:
-                tup = (i.group(),'SPLSYM')
+                tup = (lineNum,i.group(),'SPLSYM',i.span())
                 tokens.append(tup)
          
         else:
-            tup = (i.group(),'SPLSYM')
+            tup = (lineNum,i.group(),'SPLSYM',i.span())
             tokens.append(tup)
 
 
-def strings(string):
+def strings(line):
+    string,lineNum = line
     r = re.finditer(r"\".*\"|\'.*\'",string)
     for i in r:
-        tup = (i.group(),"STRING")
+        tup = (lineNum,i.group(),"STRING",i.span())
         tokens.append(tup)
 
 
-def constants(string):
+def constants(line):
+    string,lineNum = line
     r = re.finditer(r"\s*(\d+|\d*\.\d+)[,;\b]?",string)
     m = re.findall(r"\".*\"",string)
     for i in r:
@@ -90,18 +95,19 @@ def constants(string):
                     flag = 1
             
             if flag==0:
-                tup = (i.group(1),"CONST")
+                tup = (lineNum,i.group(1),"CONST",i.span())
                 tokens.append(tup)
 
         else:
-            tup = (i.group(1),"CONST")
+            tup = (lineNum,i.group(1),"CONST",i.span())
             tokens.append(tup)
 
     
 def removePPD(prog):
     ppd = []
     for i in prog:
-        r = re.fullmatch(r"(#.*<.*>|#.*\s*\".*\")",i)
+        j,k = i
+        r = re.fullmatch(r"(#.*<.*>|#.*\s*\".*\")",j)
         if r:
             ppd.append(i)
             
